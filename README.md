@@ -6,7 +6,8 @@ Nuestra Biblioteca Java oficial de WatanaApi, es compatible con la [v1.0](https:
 
 ## Requisitos 
 
-* Java 11 o superior
+* Java JDK 11 o superior
+* Maven 3.8.0 o superior
 * Registrate [aquí](https://watana.pe/registro).
 * Una vez registrado, si vas a realizar pruebas obtén tus llaves desde [aquí](https://watana.pe/auths).
 
@@ -17,4 +18,14 @@ Nuestra Biblioteca Java oficial de WatanaApi, es compatible con la [v1.0](https:
 
 
 ## Instalación
+
+### 2. Manualmente
+
+Clonar el repositorio o descargar el código fuente
+
+```bash
+git clone git@github.com:youpana/watana-api-java.git
+cd watana-api-java/
+mvn package install
+```
 
