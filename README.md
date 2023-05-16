@@ -40,13 +40,15 @@ Incluir la dependencia en el archivo pom.xml
 
 ## Configuración
 
-Definir las variables de entorno WATANA_API_RUTA, WATANA_API_TOKEN e instancias las clases WatanaApiAuth y WatanaApiClient
+Hay dos formas para establecer la conexión con WatanaApi
+
+* Definir las variables de entorno WATANA_API_RUTA, WATANA_API_TOKEN e instanciar las clases WatanaApiAuth y WatanaApiClient
 
 ```java
 	var auth = new WatanaApiAuth();
 	var client = new WatanaApiClient(auth);
 ```
-o pasar como parámetro a la clase WatanaApiAuth las dos variables
+* Pasar como parámetro a la clase WatanaApiAuth las dos variables
 
 ```java
 	var ruta = "xxx";
@@ -143,4 +145,97 @@ o pasar como parámetro a la clase WatanaApiAuth las dos variables
 		System.out.println(CARPETA001 + ": " + error);
 	}
 ```
-		
+
+## Eliminar Carpeta
+
+```java
+	var resp = client.eliminarCarpeta(CARPETA001);
+	success = resp.getBoolValue("success").orElse(false);
+	if (success) {
+		var mensaje = resp.getStrValue("mensaje").orElse("");
+		System.out.println(CARPETA002 + ": " + mensaje);
+	} else {
+		var error = resp.getStrValue("error").orElse("");
+		System.out.println(CARPETA002 + ": " + error);
+	}
+```
+
+## Validar PDF
+
+```java
+	var archivo = new WatanaApiObject();
+	archivo.add("zip_base64", new File(ARCHIVOVALIDAR));
+	var resp = client.validarPdf(archivo);
+	var success = resp.getBoolValue("success").orElse(false);
+	if (success) {
+			//
+	} else {
+		var error = resp.getStrValue("error").orElse("");
+		System.out.println(error);
+	}
+```
+
+## Firmar PDF
+
+```java
+	var firmaVisual = new WatanaApiObject()//
+			.add("ubicacion_x",100)//
+			.add("ubicacion_y",100)//
+			.add("largo",300)//
+			.add("alto",40)//
+			.add("pagina",1)//
+			.add("texto","Firmado digitalmente por: <FIRMANTE>\r\n<ORGANIZACION>\r\n<TITULO>\r\n<CORREO>\r\n<DIRECCION>\r\n<FECHA>\r\n Firmado con Watana");
+	var datos = new WatanaApiObject()//
+			.add("sello_de_tiempo",false)
+			.add("firma_visual",firmaVisual)
+			.add("zip_base64",new File(RUTAARCHIVO1));
+	var resp = client.firmarPdf(datos);
+	var success = resp.getBoolValue("success").orElse(false);
+	if (success) {
+		String nombre = "firmado.pdf";
+		var pdfISOpt = resp.getInputStreamValue("zip_base64");
+		if (pdfISOpt.isPresent()) {
+			try {
+				WatanaApiUtils.saveToFile(RUTADIRECTORIO + File.separator + nombre, pdfISOpt.get());
+				System.out.println("Archivo guardado! " + nombre);
+			} catch (IOException e) {
+				System.err.println(e.getMessage());
+			}
+		} else {
+			System.out.println("No se pudo recuperar el archivo " + nombre);
+		}
+	} else {
+		var error = resp.getStrValue("error").orElse("");
+		System.out.println(error);
+	}
+```
+
+## Sellar PDF
+
+```java
+	var archivo = new WatanaApiObject();
+	archivo.add("zip_base64", new File(ARCHIVOSELLAR));
+	var resp = client.sellarPdf(archivo);
+	var success = resp.getBoolValue("success").orElse(false);
+	if (success) {
+		String nombre = "sellado.pdf";
+		var pdfISOpt = resp.getInputStreamValue("zip_base64");
+		if (pdfISOpt.isPresent()) {
+			try {
+				WatanaApiUtils.saveToFile(RUTADIRECTORIO + File.separator + nombre, pdfISOpt.get());
+				System.out.println("Archivo guardado! " + nombre);
+			} catch (IOException e) {
+				System.err.println(e.getMessage());
+			}
+		} else {
+			System.out.println("No se pudo recuperar el archivo " + nombre);
+		}
+	} else {
+		var error = resp.getStrValue("error").orElse("");
+		System.out.println(error);
+	}
+```
+
+## Documentación
+¿Necesitas más información para integrar `watana-api-php`? La documentación completa se encuentra en [https://ayuda.llama.pe/integracion](https://ayuda.llama.pe/integracion)
+

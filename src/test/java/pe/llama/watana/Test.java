@@ -36,7 +36,7 @@ public class Test {
 	}
 
 	/*
-	 * Consultar carpeta y enviar carpeta
+	 * Consultar carpeta, enviar carpeta y eliminar carpeta
 	 */
 	public static void test2(WatanaApiClient client) throws WatanaApiException {
 		var resp = client.consultarCarpeta(CARPETA002);
@@ -132,7 +132,7 @@ public class Test {
 		var resp = client.validarPdf(archivo);
 		var success = resp.getBoolValue("success").orElse(false);
 		if (success) {
-
+				//
 		} else {
 			var error = resp.getStrValue("error").orElse("");
 			System.out.println(error);
@@ -179,7 +179,7 @@ public class Test {
 	public static void test6(WatanaApiClient client) throws WatanaApiException {
 		var archivo = new WatanaApiObject();
 		archivo.add("zip_base64", new File(ARCHIVOSELLAR));
-		var resp = client.validarPdf(archivo);
+		var resp = client.sellarPdf(archivo);
 		var success = resp.getBoolValue("success").orElse(false);
 		if (success) {
 			String nombre = "sellado.pdf";
