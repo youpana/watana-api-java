@@ -33,7 +33,7 @@ Incluir la dependencia en el archivo pom.xml
 	<dependency>
 		<groupId>pe.llama.watana</groupId>
 		<artifactId>watana-api</artifactId>
-		<version>1.0</version>
+		<version>1.0.0</version>
 	</dependency>
 </dependencies>
 ```

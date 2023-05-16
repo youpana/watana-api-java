@@ -210,13 +210,6 @@ public class Test {
 
 		// consultamos si existe una carpeta
 		test1(client);
-
-		// consultamos si no existe una carpeta para crearla sino la eliminamos
-		// test2(client);
-
-		// descargamos la carpeta DOC001
-		// test3(client);
-		test6(client);
 	}
 
 }

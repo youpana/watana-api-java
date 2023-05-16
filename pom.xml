@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pe.llama.watana</groupId>
 	<artifactId>watana-api</artifactId>
-	<version>1.0</version>
+	<version>1.0.0</version>
 	<dependencies>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
