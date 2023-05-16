@@ -237,5 +237,5 @@ Hay dos formas para establecer la conexión con WatanaApi
 ```
 
 ## Documentación
-¿Necesitas más información para integrar `watana-api-php`? La documentación completa se encuentra en [https://ayuda.llama.pe/integracion](https://ayuda.llama.pe/integracion)
+¿Necesitas más información para integrar `watana-api-java`? La documentación completa se encuentra en [https://ayuda.llama.pe/integracion](https://ayuda.llama.pe/integracion)
 
