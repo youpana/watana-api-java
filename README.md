@@ -165,10 +165,34 @@ Hay dos formas para establecer la conexión con WatanaApi
 ```java
 	var archivo = new WatanaApiObject();
 	archivo.add("zip_base64", new File(ARCHIVOVALIDAR));
+	System.out.println("Validar PDF");
 	var resp = client.validarPdf(archivo);
 	var success = resp.getBoolValue("success").orElse(false);
 	if (success) {
-			//
+		var firmas = resp.getListObject("firmas").orElse(WatanaApiListObject.emptyListObject());
+		for (var firma : firmas.getList()) {
+			System.out.println(firma);
+			var titular = firma.getStrValue("titular").orElse("");
+			System.out.println("Titular: " + titular);
+			var rutas = firma.getListString("ruta_certificacion").orElse(Collections.emptyList());
+			for (var ruta : rutas) {
+				System.out.println("Ruta: " + ruta);
+			}
+			var clavePublicaOpt = firma.getObject("clave_publica");
+			if (clavePublicaOpt.isPresent()) {
+				var clavePublica = clavePublicaOpt.get().getInputStreamValue("zip_base64");
+				if (clavePublica.isPresent()) {
+					try {
+						WatanaApiUtils.saveToFile(RUTADIRECTORIO + File.separator + "clavepublica.crt", clavePublica.get());
+						System.out.println("Clave pública guardada");
+					} catch (IOException e) {
+						System.err.println(e.getMessage());
+					}
+				}else {
+					System.out.println("No se pudo recuperar la clave pública ");
+				}
+			}
+		}
 	} else {
 		var error = resp.getStrValue("error").orElse("");
 		System.out.println(error);
@@ -179,6 +203,7 @@ Hay dos formas para establecer la conexión con WatanaApi
 
 ```java
 	var firmaVisual = new WatanaApiObject()//
+	        .add("imagen_zip_base64", new File(ARCHIVO_IMG))//
 			.add("ubicacion_x",100)//
 			.add("ubicacion_y",100)//
 			.add("largo",300)//

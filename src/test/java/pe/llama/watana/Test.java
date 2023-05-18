@@ -3,6 +3,7 @@ package pe.llama.watana;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collections;
 
 public class Test {
 
@@ -14,9 +15,11 @@ public class Test {
 
 	public static String RUTADIRECTORIO = "/tmp";
 
-	public static String ARCHIVOVALIDAR = "/tmp/archivo1.pdf";
-	
+	public static String ARCHIVOVALIDAR = "/tmp/firmado.pdf";
+
 	public static String ARCHIVOSELLAR = "/tmp/firmado.pdf";
+
+	public static String ARCHIVO_IMG = "/home/jairo/Escritorio/imagen.png";
 
 	/*
 	 * 
@@ -123,36 +126,64 @@ public class Test {
 			System.out.println(CARPETA001 + ": " + error);
 		}
 	}
+
 	/*
 	 * Validar PDF
 	 */
 	public static void test4(WatanaApiClient client) throws WatanaApiException {
 		var archivo = new WatanaApiObject();
 		archivo.add("zip_base64", new File(ARCHIVOVALIDAR));
+		System.out.println("Validar PDF");
 		var resp = client.validarPdf(archivo);
 		var success = resp.getBoolValue("success").orElse(false);
 		if (success) {
-				//
+			var firmas = resp.getListObject("firmas").orElse(WatanaApiListObject.emptyListObject());
+			for (var firma : firmas.getList()) {
+				System.out.println(firma);
+				var titular = firma.getStrValue("titular").orElse("");
+				System.out.println("Titular: " + titular);
+				var rutas = firma.getListString("ruta_certificacion").orElse(Collections.emptyList());
+				for (var ruta : rutas) {
+					System.out.println("Ruta: " + ruta);
+				}
+				var clavePublicaOpt = firma.getObject("clave_publica");
+				if (clavePublicaOpt.isPresent()) {
+					var clavePublica = clavePublicaOpt.get().getInputStreamValue("zip_base64");
+					if (clavePublica.isPresent()) {
+						try {
+							WatanaApiUtils.saveToFile(RUTADIRECTORIO + File.separator + "clavepublica.crt", clavePublica.get());
+							System.out.println("Clave pública guardada");
+						} catch (IOException e) {
+							System.err.println(e.getMessage());
+						}
+					}else {
+						System.out.println("No se pudo recuperar la clave pública ");
+					}
+				}
+			}
 		} else {
 			var error = resp.getStrValue("error").orElse("");
 			System.out.println(error);
 		}
 	}
+
 	/*
 	 * Firmar PDF
 	 */
 	public static void test5(WatanaApiClient client) throws WatanaApiException {
+		System.out.println("Firmar PDF");
 		var firmaVisual = new WatanaApiObject()//
-				.add("ubicacion_x",100)//
-				.add("ubicacion_y",100)//
-				.add("largo",300)//
-				.add("alto",40)//
-				.add("pagina",1)//
-				.add("texto","Firmado digitalmente por: <FIRMANTE>\r\n<ORGANIZACION>\r\n<TITULO>\r\n<CORREO>\r\n<DIRECCION>\r\n<FECHA>\r\n Firmado con Watana");
+				.add("imagen_zip_base64", new File(ARCHIVO_IMG))//
+				.add("ubicacion_x", 100)//
+				.add("ubicacion_y", 100)//
+				.add("largo", 300)//
+				.add("alto", 40)//
+				.add("pagina", 1)//
+				.add("texto",
+						"Firmado digitalmente por: <FIRMANTE>\r\n<ORGANIZACION>\r\n<TITULO>\r\n<CORREO>\r\n<DIRECCION>\r\n<FECHA>\r\n Firmado con Watana");
 		var datos = new WatanaApiObject()//
-				.add("sello_de_tiempo",false)
-				.add("firma_visual",firmaVisual)
-				.add("zip_base64",new File(RUTAARCHIVO1));
+				.add("sello_de_tiempo", false).add("firma_visual", firmaVisual)
+				.add("zip_base64", new File(RUTAARCHIVO1));
 		var resp = client.firmarPdf(datos);
 		var success = resp.getBoolValue("success").orElse(false);
 		if (success) {
@@ -173,6 +204,7 @@ public class Test {
 			System.out.println(error);
 		}
 	}
+
 	/*
 	 * Sellar PDF
 	 */
@@ -199,7 +231,7 @@ public class Test {
 			System.out.println(error);
 		}
 	}
-	
+
 	/*
 	 * 
 	 */
@@ -209,7 +241,7 @@ public class Test {
 		var client = new WatanaApiClient(auth);
 
 		// consultamos si existe una carpeta
-		test1(client);
+		test5(client);
 	}
 
 }

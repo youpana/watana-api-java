@@ -47,6 +47,7 @@ public class WatanaApiClient {
 			var response = client.send(requestHttp, HttpResponse.BodyHandlers.ofString());
 			int statusCode = response.statusCode();
 			String body = response.body();
+			//System.out.println(body);
 			if (statusCode == HttpStatusCode.OK.value()) {
 				@SuppressWarnings("unchecked")
 				Map<String, Object> result = objectMapper.readValue(body, HashMap.class);
